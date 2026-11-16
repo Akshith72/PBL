@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusEats - Home</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background: #f8f9fa; color: #333; line-height: 1.6; padding-top: 70px; }
+    nav { position: fixed; top: 0; width: 100%; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; }
+.logo-img {
+  height: 75px;
+  
+  width: 150px;
+  border-radius: 8px; /* Smooth corners for square images */
+  object-fit: cover;
+  display: block;
+}    .nav-links a { color: #2c3e50; text-decoration: none; font-weight: bold; margin-left: 1.2rem; }
+    .nav-links a:hover { color: #ff5722; }
+    .hero { background: #2c3e50; color: #fff; text-align: center; padding: 4rem 1rem; }
+    .hero h1 { font-size: 2.5rem; color: #ff5722; margin-bottom: 0.5rem; }
+    section { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { text-align: center; margin-bottom: 1.5rem; color: #2c3e50; border-bottom: 3px solid #ff5722; display: inline-block; }
+    .sec-title { text-align: center; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); text-align: center; }
+    .step-num { background: #ff5722; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 0.5rem; font-weight: bold; }
+    .btn { background: #ff5722; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; font-weight: bold; }
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem 1rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html"><img src="CampusEats Steam.png" class="logo-img" alt="CampusEats Logo"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="orders.html">Orders</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <h1>Campus Dining Made Easy</h1>
+    <p>Your smarter way to eat on campus - browse, order, and pay without the wait.</p>
+    <br>
+    <a href="menu.html" class="btn">View Today's Menu</a>
+  </div>
+
+  <section>
+    <div class="sec-title"><h2>What is CampusEats?</h2></div>
+    <div class="card">
+      CampusEats is a modern campus dining web application designed to streamline meal ordering and payment for students and staff. It digitizes canteen workflows to reduce wait times and improve peak-hour efficiency.
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>How to Get Started</h2></div>
+    <div class="grid">
+      <div class="card"><div class="step-num">1</div><h3>Visit App</h3><p>Open the app or website.</p></div>
+      <div class="card"><div class="step-num">2</div><h3>Sign Up</h3><p>Use your college email.</p></div>
+      <div class="card"><div class="step-num">3</div><h3>Order</h3><p>Browse menu & add to cart.</p></div>
+      <div class="card"><div class="step-num">4</div><h3>Pay</h3><p>Checkout securely.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title"><h2>Key Features</h2></div>
+    <div class="grid">
+      <div class="card"><h3>Live Menu</h3><p>Real-time item availability updates.</p></div>
+      <div class="card"><h3>Order Tracking</h3><p>Get notified when your food is ready.</p></div>
+      <div class="card"><h3>Payment Options</h3><p>Card, digital wallet, or cash on pickup.</p></div>
+    </div>
+  </section>
+
+  <footer>
+   
+  </footer>
+
+</body>
+</html>

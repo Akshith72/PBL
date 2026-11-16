@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusEats - Contact</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background: #f8f9fa; color: #333; line-height: 1.6; padding-top: 70px; }
+    nav { position: fixed; top: 0; width: 100%; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; }
+    .logo-img {
+  height: 75px;
+  
+  width: 150px;
+  border-radius: 8px; /* Smooth corners for square images */
+  object-fit: cover;
+  display: block;
+}
+    .nav-links a { color: #2c3e50; text-decoration: none; font-weight: bold; margin-left: 1.2rem; }
+    .nav-links a:hover { color: #ff5722; }
+    section { max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { text-align: center; margin-bottom: 1.5rem; color: #2c3e50; border-bottom: 3px solid #ff5722; display: inline-block; }
+    .sec-title { text-align: center; }
+    .card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    input, textarea { width: 100%; padding: 0.8rem; margin: 0.5rem 0 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    .btn { background: #ff5722; color: #fff; border: none; padding: 0.8rem; width: 100%; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 1rem; }
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem 1rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html"><img src="CampusEats Steam.png" class="logo-img" alt="CampusEats Logo"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="orders.html">Orders</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <section>
+    <div class="sec-title"><h2>Contact Us</h2></div>
+    <div class="card">
+      <form onsubmit="event.preventDefault(); alert('Message sent successfully!');">
+        <label>Your Name</label>
+        <input type="text" placeholder="Enter your name" required>
+
+        <label>College Email</label>
+        <input type="email" placeholder="student@college.edu" required>
+
+        <label>Message</label>
+        <textarea rows="4" placeholder="How can we help you?" required></textarea>
+
+        <button type="submit" class="btn">Send Message</button>
+      </form>
+    </div>
+  </section>
+
+  <footer>
+   
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusEats - Today's Menu</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: sans-serif; }
+    body { background: #f8f9fa; color: #333; line-height: 1.6; padding-top: 70px; }
+    nav { position: fixed; top: 0; width: 100%; background: #fff; display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 2rem; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 10; }
+    .logo-img {
+  height: 75px;
+  
+  width: 150px;
+  border-radius: 8px; /* Smooth corners for square images */
+  object-fit: cover;
+  display: block;
+}
+    .nav-links a { color: #2c3e50; text-decoration: none; font-weight: bold; margin-left: 1.2rem; }
+    .nav-links a:hover { color: #ff5722; }
+    section { max-width: 800px; margin: 2rem auto; padding: 0 1rem; }
+    h2 { text-align: center; margin-bottom: 1.5rem; color: #2c3e50; border-bottom: 3px solid #ff5722; display: inline-block; }
+    .sec-title { text-align: center; }
+    .card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .menu-item { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #ddd; padding: 0.8rem 0; }
+    .btn { background: #ff5722; color: #fff; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; }
+    .cart-btn { background: #2c3e50; color: #fff; padding: 0.4rem 1rem; border-radius: 20px; border: none; cursor: pointer; font-weight: bold; }
+    footer { background: #2c3e50; color: #fff; text-align: center; padding: 2rem 1rem; margin-top: 3rem; }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html"><img src="CampusEats Steam.png" class="logo-img" alt="CampusEats Logo"></a>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="menu.html">Menu</a>
+      <a href="orders.html">Orders</a>
+      <a href="contact.html">Contact</a>
+      <button class="cart-btn" onclick="alert('Cart total: ₹' + total)">Cart (<span id="count">0</span>)</button>
+    </div>
+  </nav>
+
+  <section>
+    <div class="sec-title"><h2>Today's Menu</h2></div>
+    <div class="card">
+      <div class="menu-item"><span>Veg Thali - ₹120</span><button class="btn" onclick="add(120)">Add</button></div>
+      <div class="menu-item"><span>Veg Manchurian - ₹80</span><button class="btn" onclick="add(80)">Add</button></div>
+      <div class="menu-item"><span>Paneer Roll - ₹80</span><button class="btn" onclick="add(80)">Add</button></div>
+      <div class="menu-item"><span>Cold Coffee - ₹50</span><button class="btn" onclick="add(50)">Add</button></div>
+    </div>
+  </section>
+
+  <footer>
+    
+  </footer>
+
+  <script>
+    let count = 0, total = 0;
+    function add(price) {
+      count++;
+      total += price;
+      document.getElementById('count').innerText = count;
+    }
+  </script>
+
+</body>
+</html>
