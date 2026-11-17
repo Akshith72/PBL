@@ -5,6 +5,7 @@ import { contactMessages, menuItems } from "@/lib/db/schema"
 import { requireCampusAdmin } from "@/lib/authorization"
 import { getOrdersWithItems, saveMenuItem, toggleMenuAvailability, updateOrderStatus } from "@/app/actions"
 import { formatRupees } from "@/lib/format"
+import { PAYMENT_METHOD_LABELS } from "@/lib/payment-methods"
 import { MenuDaySelect } from "@/components/menu-day-select"
 
 export const metadata: Metadata = { title: "Campus management" }
@@ -53,7 +54,7 @@ export default async function ManagePage({ searchParams }: { searchParams: Promi
 
       <div className="surface"><div className="section-heading"><div><span className="eyebrow"><span className="eyebrow-dot" />Kitchen queue</span><h2>Recent orders</h2></div></div>
         {ordersWithItems.orders.length ? ordersWithItems.orders.map((order) => <div className="order-admin-row" key={order.id}>
-          <div><strong>{order.code}</strong><div className="form-note">{order.pickupDay ? `Pickup ${order.pickupDay} · ` : ""}{ordersWithItems.items.filter((item) => item.orderId === order.id).map((item) => `${item.itemName} × ${item.quantity}`).join(", ")} · {formatRupees(order.total)}</div></div>
+          <div><strong>{order.code}</strong><div className="form-note">{order.pickupDay ? `Pickup ${order.pickupDay} · ` : ""}Payment: {PAYMENT_METHOD_LABELS[order.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS] ?? "Cash"} · {ordersWithItems.items.filter((item) => item.orderId === order.id).map((item) => `${item.itemName} × ${item.quantity}`).join(", ")} · {formatRupees(order.total)}</div></div>
           <span className="status-pill">{order.status}</span>
           <form action={updateOrderStatus} className="admin-actions"><input type="hidden" name="id" value={order.id} /><label className="sr-only" htmlFor={`status-${order.id}`}>Status for {order.code}</label><select id={`status-${order.id}`} name="status" defaultValue={order.status}>{statusOptions.map((status) => <option key={status} value={status}>{status}</option>)}</select><button className="button button-small">Update</button></form>
         </div>) : <p className="form-note">No orders yet.</p>}

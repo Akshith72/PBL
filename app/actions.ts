@@ -11,6 +11,7 @@ import { campusOrderItems, campusOrders, contactMessages, menuItems } from "@/li
 import { requireCampusAdmin } from "@/lib/authorization"
 import { headers } from "next/headers"
 import { MENU_DAYS } from "@/lib/menu-days"
+import { PAYMENT_METHODS } from "@/lib/payment-methods"
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -40,11 +41,13 @@ export async function sendContactMessage(_previous: ContactState, formData: Form
 
 const cartSchema = z.array(z.object({ id: z.number().int().positive(), quantity: z.number().int().min(1).max(20) })).min(1).max(30)
 
-export async function createOrder(input: unknown, menuDayInput: unknown) {
+export async function createOrder(input: unknown, menuDayInput: unknown, paymentMethodInput: unknown) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) return { success: false, message: "Sign in before placing an order." }
   const selectedDay = z.enum(MENU_DAYS).safeParse(menuDayInput)
   if (!selectedDay.success) return { success: false, message: "Choose a valid menu day." }
+  const selectedPaymentMethod = z.enum(PAYMENT_METHODS).safeParse(paymentMethodInput)
+  if (!selectedPaymentMethod.success) return { success: false, message: "Choose a valid payment method." }
   const parsed = cartSchema.safeParse(input)
   if (!parsed.success) return { success: false, message: "Your cart needs at least one valid item." }
 
@@ -72,6 +75,7 @@ export async function createOrder(input: unknown, menuDayInput: unknown) {
       userId: session.user.id,
       total,
       status: "received",
+      paymentMethod: selectedPaymentMethod.data,
       pickupDay: selectedDay.data,
     }).returning()
     await transaction.insert(campusOrderItems).values(availableItems.map((item) => ({

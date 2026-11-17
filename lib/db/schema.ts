@@ -64,6 +64,7 @@ export const campusOrders = pgTable("campus_orders", {
   userId: text("user_id").notNull(),
   total: integer("total").notNull(),
   status: text("status").notNull().default("received"),
+  paymentMethod: text("payment_method").notNull().default("cash"),
   pickupNote: text("pickup_note"),
   pickupDay: text("pickup_day"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
