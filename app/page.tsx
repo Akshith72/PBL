@@ -1,12 +1,17 @@
 import Link from "next/link"
 import { ArrowRight, Clock3, Leaf, ShieldCheck, Sparkles, Star, Utensils } from "lucide-react"
-import { eq } from "drizzle-orm"
+import { and, eq, isNull, or } from "drizzle-orm"
 import { db } from "@/lib/db"
 import { menuItems } from "@/lib/db/schema"
 import { formatRupees } from "@/lib/format"
+import { getCurrentMenuDay } from "@/lib/menu-days"
 
 export default async function HomePage() {
-  const dishes = await db.select().from(menuItems).where(eq(menuItems.available, true)).limit(4)
+  const today = getCurrentMenuDay()
+  const dishes = await db.select().from(menuItems).where(and(
+    eq(menuItems.available, true),
+    or(isNull(menuItems.menuDay), eq(menuItems.menuDay, today)),
+  )).limit(4)
 
   return (
     <main className="main">

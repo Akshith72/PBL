@@ -53,6 +53,7 @@ export const menuItems = pgTable("menu_items", {
   category: text("category").notNull().default("Meals"),
   price: integer("price").notNull(),
   available: boolean("available").notNull().default(true),
+  menuDay: text("menu_day"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 })
@@ -64,6 +65,7 @@ export const campusOrders = pgTable("campus_orders", {
   total: integer("total").notNull(),
   status: text("status").notNull().default("received"),
   pickupNote: text("pickup_note"),
+  pickupDay: text("pickup_day"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 })

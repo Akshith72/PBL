@@ -22,7 +22,7 @@ export default async function OrdersPage() {
         return <article className="order-card" key={order.id}>
           <div className="order-header"><div><div className="order-code">{order.code}</div><div className="order-date">{new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeStyle: "short" }).format(order.createdAt)}</div></div><span className={`status-pill ${order.status}`}>{statusLabels[order.status] ?? order.status}</span></div>
           <div className="order-details">{orderItems.map((item) => <div key={item.id}>{item.itemName} × {item.quantity} <span>· {formatRupees(item.unitPrice * item.quantity)}</span></div>)}</div>
-          <div className="order-header" style={{ borderBottom: 0, paddingBottom: 0, marginTop: 12 }}><span className="form-note">Pickup at the campus counter</span><span className="order-total">{formatRupees(order.total)}</span></div>
+          <div className="order-header" style={{ borderBottom: 0, paddingBottom: 0, marginTop: 12 }}><span className="form-note">Pickup {order.pickupDay ?? "day to be confirmed"} at the campus counter</span><span className="order-total">{formatRupees(order.total)}</span></div>
         </article>
       })}</div> : <div className="surface empty-state"><h2>No orders yet</h2><p>Find something delicious and it&apos;ll show up here.</p><Link href="/menu" className="button" style={{ marginTop: 12 }}>Browse the menu</Link></div>}
     </section>

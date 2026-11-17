@@ -5,18 +5,34 @@ import Link from "next/link"
 import { Coffee, Sandwich, Soup, Utensils } from "lucide-react"
 import { createOrder } from "@/app/actions"
 import { formatRupees } from "@/lib/format"
+import { MENU_DAYS, type MenuDay } from "@/lib/menu-days"
 import type { menuItems } from "@/lib/db/schema"
 
 type MenuItem = typeof menuItems.$inferSelect
 const dishIcons = [Soup, Sandwich, Utensils, Coffee]
 
-export function OrderCart({ items, signedIn }: { items: MenuItem[]; signedIn: boolean }) {
+type OrderCartProps = {
+  items: MenuItem[]
+  signedIn: boolean
+  defaultDay: MenuDay
+}
+
+export function OrderCart({ items, signedIn, defaultDay }: OrderCartProps) {
+  const [selectedDay, setSelectedDay] = useState<MenuDay>(defaultDay)
   const [quantities, setQuantities] = useState<Record<number, number>>({})
   const [message, setMessage] = useState("")
   const [submitted, setSubmitted] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const dayItems = items.filter((item) => item.menuDay === null || item.menuDay === selectedDay)
   const count = Object.values(quantities).reduce((sum, quantity) => sum + quantity, 0)
-  const total = items.reduce((sum, item) => sum + item.price * (quantities[item.id] ?? 0), 0)
+  const total = dayItems.reduce((sum, item) => sum + item.price * (quantities[item.id] ?? 0), 0)
+
+  function selectDay(day: MenuDay) {
+    setSelectedDay(day)
+    setQuantities({})
+    setMessage("")
+    setSubmitted(false)
+  }
 
   function changeQuantity(id: number, delta: number) {
     setQuantities((current) => {
@@ -30,18 +46,36 @@ export function OrderCart({ items, signedIn }: { items: MenuItem[]; signedIn: bo
   function placeOrder() {
     setMessage("")
     startTransition(async () => {
-      const result = await createOrder(Object.entries(quantities).filter(([, quantity]) => quantity > 0).map(([id, quantity]) => ({ id: Number(id), quantity })))
+      const cart = Object.entries(quantities)
+        .filter(([, quantity]) => quantity > 0)
+        .map(([id, quantity]) => ({ id: Number(id), quantity }))
+      const result = await createOrder(cart, selectedDay)
       setMessage(result.message)
       setSubmitted(result.success)
       if (result.success) setQuantities({})
     })
   }
 
-  if (items.length === 0) return <div className="surface empty-state"><h2>Nothing on the counter just yet</h2><p>The kitchen hasn&apos;t added today&apos;s menu. Please check back soon.</p></div>
+  if (items.length === 0) return <div className="surface empty-state"><h2>Nothing on the counter just yet</h2><p>The kitchen hasn&apos;t added a weekday menu. Please check back soon.</p></div>
 
   return <>
-    <div className="menu-toolbar"><div className="filter-pills"><span className="filter-pill active">Everything fresh</span><span className="filter-pill">Available now</span></div><span className="form-note">Prices in Indian rupees</span></div>
-    <div className="menu-list">{items.map((item, index) => {
+    <div className="menu-toolbar menu-day-toolbar">
+      <div>
+        <span className="day-selector-label">Choose a pickup day</span>
+        <div className="day-selector" role="group" aria-label="Choose a menu day">
+          {MENU_DAYS.map((day) => <button
+            type="button"
+            key={day}
+            className={`day-tab${day === selectedDay ? " active" : ""}`}
+            aria-pressed={day === selectedDay}
+            onClick={() => selectDay(day)}
+          >{day}</button>)}
+        </div>
+      </div>
+      <span className="form-note">Everyday favorites appear all week · Prices in Indian rupees</span>
+    </div>
+    <h2 className="day-menu-heading">{selectedDay}&apos;s menu</h2>
+    {dayItems.length ? <div className="menu-list">{dayItems.map((item, index) => {
       const Icon = dishIcons[index % dishIcons.length]
       const quantity = quantities[item.id] ?? 0
       return <article className="menu-row" key={item.id}>
@@ -53,8 +87,8 @@ export function OrderCart({ items, signedIn }: { items: MenuItem[]; signedIn: bo
           <button type="button" aria-label={`Add one ${item.name}`} onClick={() => changeQuantity(item.id, 1)}>+</button>
         </div>
       </article>
-    })}</div>
-    {count > 0 && <div className="cart-panel"><div><strong>{count} {count === 1 ? "dish" : "dishes"} · {formatRupees(total)}</strong><small>Pickup from the campus counter</small></div>{signedIn ? <button type="button" className="button" onClick={placeOrder} disabled={isPending}>{isPending ? "Sending order…" : "Place order"}</button> : <Link className="button" href="/sign-in">Sign in to order</Link>}</div>}
+    })}</div> : <div className="surface empty-state"><h3>No dishes for {selectedDay} yet</h3><p>Browse another day to see what the kitchen is preparing.</p></div>}
+    {count > 0 && <div className="cart-panel"><div><strong>{count} {count === 1 ? "dish" : "dishes"} · {formatRupees(total)}</strong><small>Pickup on {selectedDay} at the campus counter</small></div>{signedIn ? <button type="button" className="button" onClick={placeOrder} disabled={isPending}>{isPending ? "Sending order…" : "Place order"}</button> : <Link className="button" href="/sign-in">Sign in to order</Link>}</div>}
     {message && <p className={`feedback ${submitted ? "success" : ""}`} role="status">{message}{submitted && <> <Link href="/orders">View your orders</Link></>}</p>}
   </>
 }

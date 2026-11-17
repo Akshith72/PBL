@@ -1,6 +1,6 @@
 "use server"
 
-import { and, desc, eq, inArray } from "drizzle-orm"
+import { and, desc, eq, inArray, isNull, or } from "drizzle-orm"
 import { randomInt } from "node:crypto"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
@@ -10,6 +10,7 @@ import { db } from "@/lib/db"
 import { campusOrderItems, campusOrders, contactMessages, menuItems } from "@/lib/db/schema"
 import { requireCampusAdmin } from "@/lib/authorization"
 import { headers } from "next/headers"
+import { MENU_DAYS } from "@/lib/menu-days"
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -39,9 +40,11 @@ export async function sendContactMessage(_previous: ContactState, formData: Form
 
 const cartSchema = z.array(z.object({ id: z.number().int().positive(), quantity: z.number().int().min(1).max(20) })).min(1).max(30)
 
-export async function createOrder(input: unknown) {
+export async function createOrder(input: unknown, menuDayInput: unknown) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) return { success: false, message: "Sign in before placing an order." }
+  const selectedDay = z.enum(MENU_DAYS).safeParse(menuDayInput)
+  if (!selectedDay.success) return { success: false, message: "Choose a valid menu day." }
   const parsed = cartSchema.safeParse(input)
   if (!parsed.success) return { success: false, message: "Your cart needs at least one valid item." }
 
@@ -52,7 +55,11 @@ export async function createOrder(input: unknown) {
   }
 
   const ids = [...quantities.keys()]
-  const availableItems = await db.select().from(menuItems).where(and(inArray(menuItems.id, ids), eq(menuItems.available, true)))
+  const availableItems = await db.select().from(menuItems).where(and(
+    inArray(menuItems.id, ids),
+    eq(menuItems.available, true),
+    or(isNull(menuItems.menuDay), eq(menuItems.menuDay, selectedDay.data)),
+  ))
   if (availableItems.length !== ids.length) return { success: false, message: "A dish in your cart is no longer available. Refresh the menu and try again." }
 
   const total = availableItems.reduce((sum, item) => sum + item.price * (quantities.get(item.id) ?? 0), 0)
@@ -65,6 +72,7 @@ export async function createOrder(input: unknown) {
       userId: session.user.id,
       total,
       status: "received",
+      pickupDay: selectedDay.data,
     }).returning()
     await transaction.insert(campusOrderItems).values(availableItems.map((item) => ({
       orderId: created.id,
@@ -87,6 +95,7 @@ const menuItemSchema = z.object({
   description: z.string().trim().max(240).default(""),
   category: z.string().trim().min(2).max(40),
   price: z.coerce.number().int().positive().max(100000),
+  menuDay: z.enum(MENU_DAYS).nullable(),
 })
 
 export async function saveMenuItem(formData: FormData) {
@@ -97,6 +106,7 @@ export async function saveMenuItem(formData: FormData) {
     description: formData.get("description") ?? "",
     category: formData.get("category"),
     price: formData.get("price"),
+    menuDay: formData.get("menuDay") || null,
   })
   if (!parsed.success) redirect("/manage?error=invalid-item")
   const { id, ...values } = parsed.data
