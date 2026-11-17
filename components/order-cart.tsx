@@ -6,6 +6,7 @@ import { Coffee, Sandwich, Soup, Utensils } from "lucide-react"
 import { createOrder } from "@/app/actions"
 import { formatRupees } from "@/lib/format"
 import { MENU_DAYS, type MenuDay } from "@/lib/menu-days"
+import { PAYMENT_METHODS, PAYMENT_METHOD_LABELS, type PaymentMethod } from "@/lib/payment-methods"
 import type { menuItems } from "@/lib/db/schema"
 
 type MenuItem = typeof menuItems.$inferSelect
@@ -19,7 +20,9 @@ type OrderCartProps = {
 
 export function OrderCart({ items, signedIn, defaultDay }: OrderCartProps) {
   const [selectedDay, setSelectedDay] = useState<MenuDay>(defaultDay)
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cash")
   const [quantities, setQuantities] = useState<Record<number, number>>({})
+
   const [message, setMessage] = useState("")
   const [submitted, setSubmitted] = useState(false)
   const [isPending, startTransition] = useTransition()
@@ -49,7 +52,7 @@ export function OrderCart({ items, signedIn, defaultDay }: OrderCartProps) {
       const cart = Object.entries(quantities)
         .filter(([, quantity]) => quantity > 0)
         .map(([id, quantity]) => ({ id: Number(id), quantity }))
-      const result = await createOrder(cart, selectedDay)
+      const result = await createOrder(cart, selectedDay, paymentMethod)
       setMessage(result.message)
       setSubmitted(result.success)
       if (result.success) setQuantities({})
@@ -88,7 +91,7 @@ export function OrderCart({ items, signedIn, defaultDay }: OrderCartProps) {
         </div>
       </article>
     })}</div> : <div className="surface empty-state"><h3>No dishes for {selectedDay} yet</h3><p>Browse another day to see what the kitchen is preparing.</p></div>}
-    {count > 0 && <div className="cart-panel"><div><strong>{count} {count === 1 ? "dish" : "dishes"} · {formatRupees(total)}</strong><small>Pickup on {selectedDay} at the campus counter</small></div>{signedIn ? <button type="button" className="button" onClick={placeOrder} disabled={isPending}>{isPending ? "Sending order…" : "Place order"}</button> : <Link className="button" href="/sign-in">Sign in to order</Link>}</div>}
+    {count > 0 && <div className="cart-panel"><div><strong>{count} {count === 1 ? "dish" : "dishes"} · {formatRupees(total)}</strong><small>Pickup on {selectedDay} at the campus counter</small></div><fieldset className="payment-options"><legend>Payment method</legend>{PAYMENT_METHODS.map((method) => <label key={method}><input type="radio" name="paymentMethod" value={method} checked={paymentMethod === method} onChange={() => setPaymentMethod(method)} /><span>{PAYMENT_METHOD_LABELS[method]}</span></label>)}<small className="payment-note">Pay at pickup with your selected method.</small></fieldset>{signedIn ? <button type="button" className="button" onClick={placeOrder} disabled={isPending}>{isPending ? "Sending order…" : "Place order"}</button> : <Link className="button" href="/sign-in">Sign in to order</Link>}</div>}
     {message && <p className={`feedback ${submitted ? "success" : ""}`} role="status">{message}{submitted && <> <Link href="/orders">View your orders</Link></>}</p>}
   </>
 }
